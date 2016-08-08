@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Game from './Game';
-import { createAtom } from './Atom';
+import { createAtom, updateAtom } from './Atom';
 import './App.css';
 
 const ADD_ATOM_INTERVAL = 5000;
@@ -13,12 +13,14 @@ class App extends Component {
 
     this.state = {
       barrier: false,
-      atoms: []
+      atoms: [],
+      previousUpdate: 0
     };
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.addAtom = this.addAtom.bind(this);
+    this.update = this.update.bind(this);
   }
 
   addAtom() {
@@ -28,17 +30,27 @@ class App extends Component {
   }
 
   handleKeyDown(e) {
-    e.preventDefault();
     if (e.code === 'Space') {
+      e.preventDefault();
       this.setState({ barrier: true });
     }
   }
 
   handleKeyUp(e) {
-    e.preventDefault();
     if (e.code === 'Space') {
+      e.preventDefault();
       this.setState({ barrier: false });
     }
+  }
+
+  update(timestamp) {
+    const timediff = timestamp - this.state.previousUpdate;
+    const atoms = this.state.atoms.map((atom) => updateAtom(atom, timediff));
+    this.setState({
+      previousUpdate: timestamp,
+      atoms
+    });
+    window.requestAnimationFrame(this.update);
   }
 
   componentWillMount() {
@@ -46,6 +58,7 @@ class App extends Component {
     document.addEventListener('keyup', this.handleKeyUp, false);
     this.addAtom();
     this.addAtomInterval = window.setInterval(this.addAtom, ADD_ATOM_INTERVAL);
+    window.requestAnimationFrame(this.update);
   }
 
   componentWillUnmount() {
@@ -56,7 +69,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Game width={GAME_SIZE} height={GAME_SIZE} barrier={this.state.barrier} atoms={this.state.atoms} />
+        <Game
+          width={GAME_SIZE}
+          height={GAME_SIZE}
+          barrier={this.state.barrier}
+          atoms={this.state.atoms} />
       </div>
     );
   }
