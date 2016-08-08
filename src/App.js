@@ -45,7 +45,10 @@ class App extends Component {
 
   update(timestamp) {
     const timediff = timestamp - this.state.previousUpdate;
-    const atoms = this.state.atoms.map((atom) => updateAtom(atom, timediff));
+    const barrier = this.state.barrier;
+    const atoms = this.state.atoms.map((atom) => {
+      return updateAtom(atom, barrier, timediff)
+    });
     this.setState({
       previousUpdate: timestamp,
       atoms
