@@ -1,11 +1,11 @@
 const colors = {
   hot: {
     background: "#300",
-    atom: "#c00"
+    atom: "#e66"
   },
   cold: {
     background: "#003",
-    atom: "#00c"
+    atom: "#66e"
   }
 };
 
@@ -15,5 +15,14 @@ export function getBackgroundColorFromTemperature(temperature) {
       return colors.hot.background;
     default:
       return colors.cold.background;
+  }
+}
+
+export function getAtomColorFromTemperature(temperature) {
+  switch(temperature) {
+    case 'hot':
+      return colors.hot.atom;
+    default:
+      return colors.cold.atom;
   }
 }

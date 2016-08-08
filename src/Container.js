@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { getBackgroundColorFromTemperature } from './Colors';
+import { getBackgroundColorFromTemperature } from './colors';
 
 const Container = ({ x, y, width, height, temperature }) => {
    const fillColor = getBackgroundColorFromTemperature(temperature);

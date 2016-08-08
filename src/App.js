@@ -1,17 +1,30 @@
 import React, { Component } from 'react';
 import Game from './Game';
+import { createAtom } from './Atom';
 import './App.css';
+
+const ADD_ATOM_INTERVAL = 5000;
+const MAX_ATOMS = 10;
+const GAME_SIZE = 500;
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      barrier: false
+      barrier: false,
+      atoms: []
     };
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.addAtom = this.addAtom.bind(this);
+  }
+
+  addAtom() {
+    if (this.state.atoms.length >= MAX_ATOMS) return;
+    const atoms = this.state.atoms.concat([createAtom()]);
+    this.setState({ atoms });
   }
 
   handleKeyDown(e) {
@@ -31,6 +44,8 @@ class App extends Component {
   componentWillMount() {
     document.addEventListener('keydown', this.handleKeyDown, false);
     document.addEventListener('keyup', this.handleKeyUp, false);
+    this.addAtom();
+    this.addAtomInterval = window.setInterval(this.addAtom, ADD_ATOM_INTERVAL);
   }
 
   componentWillUnmount() {
@@ -41,7 +56,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Game width={500} height={500} barrier={this.state.barrier} />
+        <Game width={GAME_SIZE} height={GAME_SIZE} barrier={this.state.barrier} atoms={this.state.atoms} />
       </div>
     );
   }
