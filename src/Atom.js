@@ -1,80 +1,47 @@
 import React, { PropTypes } from 'react';
 import { getAtomColorFromTemperature } from './colors';
+import Vector, { randomVector } from './Vector';
 
+const MAX = 100;
 const ATOM_RADIUS = 1;
+const MIN_POSITION = 10;
+const MAX_POSITION = 90;
+const MIN_VELOCITY = -20;
 const MAX_VELOCITY = 20;
+
 let atomId = 0;
 
-const Atom = ({x, y, r, temperature}) => {
+const Atom = ({location, radius, temperature}) => {
   const fillColor = getAtomColorFromTemperature(temperature);
   return (
-    <circle cx={x} cy={y} r={r} fill={fillColor} />
+    <circle cx={location.x} cy={location.y} r={radius} fill={fillColor} />
   );
 };
 
 Atom.propTypes = {
-  x: PropTypes.number.isRequired,
-  y: PropTypes.number.isRequired,
-  r: PropTypes.number.isRequired,
+  location: PropTypes.object.isRequired,
+  radius: PropTypes.number.isRequired,
   temperature: PropTypes.string.isRequired
 };
 
-function randomCoordinate() {
-  return Math.random() * 80 + 10;
+function randomLocation() {
+  return randomVector(MIN_POSITION, MAX_POSITION, MIN_POSITION, MAX_POSITION);
 }
 
 function randomVelocity() {
-  return Math.random() * MAX_VELOCITY * 2 - MAX_VELOCITY;
+  return randomVector(MIN_VELOCITY, MAX_VELOCITY, MIN_VELOCITY, MAX_VELOCITY);
 }
 
 function randomTemperature() {
   return (Math.random() > 0.5) ? 'hot' : 'cold';
 }
 
-function moveX(atom, barrier, min, max, timediff) {
-  const moveBy = atom.dx * timediff / 1000;
-  let newX = atom.x + moveBy;
-  let newDx = atom.dx;
-  if (newX > max) {
-    newX = max - (newX - max);
-    newDx = -newDx;
-  }
-  if (newX < 0) {
-    newX = min + (min - newX);
-    newDx = -newDx;
-  }
-  return {
-    x: newX,
-    dx: newDx
-  };
-}
-
-function moveY(atom, barrier, min, max, timediff) {
-  const moveBy = atom.dy * timediff / 1000;
-  let newY = atom.y + moveBy;
-  let newDy = atom.dy;
-  if (newY > max) {
-    newY = max - (newY - max);
-    newDy = -newDy;
-  }
-  if (newY < 0) {
-    newY = min + (min - newY);
-    newDy = -newDy;
-  }
-  return {
-    y: newY,
-    dy: newDy
-  };
-}
-
 export function createAtom() {
   return {
     id: atomId++,
-    x: randomCoordinate(),
-    y: randomCoordinate(),
-    dx: randomVelocity(),
-    dy: randomVelocity(),
-    r: ATOM_RADIUS,
+    location: randomLocation(),
+    velocity: randomVelocity(),
+    radius: ATOM_RADIUS,
     temperature: randomTemperature()
   }
 }
@@ -82,8 +49,22 @@ export function createAtom() {
 export function updateAtom(atom, barrier, timediff) {
   return {
     ...atom,
-    ...moveX(atom, barrier, 0, 100, timediff),
-    ...moveY(atom, barrier, 0, 100, timediff)
+    ...updateWithBounds(
+      atom.location,
+      atom.velocity,
+      timediff,
+      new Vector(MAX, MAX)
+    )
+  };
+}
+
+function updateWithBounds(location, velocity, timediff, bounds) {
+  let newLocation = location.add(velocity.scale(timediff/1000));
+  let newVelocity = velocity.bounceIfOutside(newLocation, bounds);
+
+  return {
+    location: newLocation,
+    velocity: newVelocity
   };
 }
 
