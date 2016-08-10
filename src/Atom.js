@@ -80,11 +80,11 @@ export function createAtom() {
 }
 
 export function updateAtom(atom, barrier, timediff) {
-  return Object.assign({},
-    atom,
-    moveX(atom, barrier, 0, 100, timediff),
-    moveY(atom, barrier, 0, 100, timediff)
-  )
+  return {
+    ...atom,
+    ...moveX(atom, barrier, 0, 100, timediff),
+    ...moveY(atom, barrier, 0, 100, timediff)
+  };
 }
 
 export default Atom;

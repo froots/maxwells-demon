@@ -25,8 +25,9 @@ class App extends Component {
 
   addAtom() {
     if (this.state.atoms.length >= MAX_ATOMS) return;
-    const atoms = this.state.atoms.concat([createAtom()]);
-    this.setState({ atoms });
+    this.setState({
+      atoms: [...this.state.atoms, createAtom()]
+    });
   }
 
   handleKeyDown(e) {
@@ -53,7 +54,7 @@ class App extends Component {
       previousUpdate: timestamp,
       atoms
     });
-    window.requestAnimationFrame(this.update);
+    this.animationFrame = window.requestAnimationFrame(this.update);
   }
 
   componentWillMount() {
@@ -61,12 +62,16 @@ class App extends Component {
     document.addEventListener('keyup', this.handleKeyUp, false);
     this.addAtom();
     this.addAtomInterval = window.setInterval(this.addAtom, ADD_ATOM_INTERVAL);
-    window.requestAnimationFrame(this.update);
+    this.animationFrame = window.requestAnimationFrame(this.update);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown, false);
     document.removeEventListener('keyup', this.handleKeyUp, false);
+    window.clearInterval(this.addAtomInterval);
+    if (window.cancelAnimationFrame) {
+      window.cancelAnimationFrame(this.animationFrame);
+    }
   }
 
   render() {
