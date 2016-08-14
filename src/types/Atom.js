@@ -23,7 +23,11 @@ export function create() {
 }
 
 export function update(atom, timediff) {
-  return atom
+  const velocity = atom.velocity.scale(timediff / 1000)
+  return {
+    ...atom,
+    location: atom.location.add(velocity)
+  }
 }
 
 function randomLocation() {
