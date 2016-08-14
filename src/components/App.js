@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
 import Game from './Game'
-import { createAtom, updateAtom } from './Atom'
+import { create as createAtom, update as updateAtom } from '../types/Atom'
+import { ADD_ATOM_INTERVAL, MAX_ATOMS, GAME_SIZE } from '../config.json'
 import './App.css'
-
-const ADD_ATOM_INTERVAL = 5000
-const MAX_ATOMS = 10
-const GAME_SIZE = 500
 
 class App extends Component {
   state = {
@@ -51,7 +48,7 @@ class App extends Component {
       return
     }
     this.setState({
-      atoms: [...this.state.atoms, createAtom()]
+      atoms: [...this.state.atoms, createAtom(1, 1)]
     })
   }
 
@@ -71,8 +68,7 @@ class App extends Component {
 
   update(timestamp) {
     const timediff = timestamp - this.state.previousUpdate
-    const barrier = this.state.barrier
-    const atoms = this.state.atoms.map((atom) => updateAtom(atom, barrier, timediff))
+    const atoms = this.state.atoms.map((atom) => updateAtom(atom, timediff))
     this.setState({
       previousUpdate: timestamp,
       atoms
