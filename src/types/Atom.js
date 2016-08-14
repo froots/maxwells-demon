@@ -1,5 +1,11 @@
 import { random } from '../lib/Vector'
-import { MINIMUM_SPEED, MAXIMUM_SPEED, ATOM_RADIUS } from '../config.json'
+import {
+  MINIMUM_SPEED,
+  MAXIMUM_SPEED,
+  MINIMUM_LOCATION,
+  MAXIMUM_LOCATION,
+  ATOM_RADIUS
+} from '../config.json'
 
 const HOT = 'hot'
 const COLD = 'cold'
@@ -21,7 +27,7 @@ export function update(atom, timediff) {
 }
 
 function randomLocation() {
-  return random(0, 0, 1, 1)
+  return random(MINIMUM_LOCATION, MINIMUM_LOCATION, MAXIMUM_LOCATION, MAXIMUM_LOCATION)
 }
 
 function randomVelocity() {
