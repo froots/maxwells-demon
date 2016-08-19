@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Game from './Game'
 import { create as createAtom, update as updateAtom } from '../types/Atom'
+import Region from '../lib/Region'
 import { ADD_ATOM_INTERVAL, MAX_ATOMS, GAME_SIZE } from '../config.json'
 import './App.css'
 
@@ -25,10 +26,15 @@ class App extends Component {
   }
 
   componentWillMount() {
+    this.region = new Region(0, 0, 1, 1)
     this.handleKeyDown = this.handleKeyDown.bind(this)
     this.handleKeyUp = this.handleKeyUp.bind(this)
     this.addAtom = this.addAtom.bind(this)
     this.update = this.update.bind(this)
+
+    document.addEventListener('keydown', this.handleKeyDown, false)
+    document.addEventListener('keyp', this.handleKeyUp, false)
+
     this.addAtom()
     this.addAtomInterval = window.setInterval(this.addAtom, ADD_ATOM_INTERVAL)
     this.animationFrame = window.requestAnimationFrame(this.update)
@@ -48,7 +54,7 @@ class App extends Component {
       return
     }
     this.setState({
-      atoms: [...this.state.atoms, createAtom(1, 1)]
+      atoms: [...this.state.atoms, createAtom(this.region)]
     })
   }
 
@@ -68,7 +74,8 @@ class App extends Component {
 
   update(timestamp) {
     const timediff = timestamp - this.state.previousUpdate
-    const atoms = this.state.atoms.map((atom) => updateAtom(atom, timediff))
+    const region = this.region
+    const atoms = this.state.atoms.map((atom) => updateAtom(atom, timediff, region))
     this.setState({
       previousUpdate: timestamp,
       atoms

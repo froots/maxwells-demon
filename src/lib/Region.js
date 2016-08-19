@@ -6,3 +6,5 @@ class Region {
     this.bottomRight = new Vector(x2, y2)
   }
 }
+
+export default Region

@@ -1,9 +1,7 @@
-import { random } from '../lib/Vector'
+import { random as randomV } from '../lib/Vector'
 import {
   MINIMUM_SPEED,
   MAXIMUM_SPEED,
-  MINIMUM_LOCATION,
-  MAXIMUM_LOCATION,
   ATOM_RADIUS
 } from '../config.json'
 
@@ -12,30 +10,59 @@ const COLD = 'cold'
 
 let atomId = 0
 
-export function create() {
+export function create(region) {
   return {
     id: atomId++,
-    location: randomLocation(),
+    location: randomLocation(region),
     velocity: randomVelocity(),
     radius: ATOM_RADIUS,
     temperature: randomTemperature()
   }
 }
 
-export function update(atom, timediff) {
-  const velocity = atom.velocity.scale(timediff / 1000)
+export function update(atom, timediff, region) {
+  const periodVelocity = atom.velocity.scale(timediff / 1000)
+  let location = atom.location.add(periodVelocity)
+  let velocity = atom.velocity.clone()
+
+  if (location.x + atom.radius > region.bottomRight.x) {
+    velocity.x *= -1
+    location.x = region.bottomRight.x - atom.radius
+  }
+
+  if (location.x - atom.radius < region.topLeft.x) {
+    velocity.x *= -1
+    location.x = region.topLeft.x + atom.radius
+  }
+
+  if (location.y + atom.radius > region.bottomRight.y) {
+    velocity.y *= -1
+    location.y = region.bottomRight.y - atom.radius
+  }
+
+  if (location.y - atom.radius < region.topLeft.y) {
+    velocity.y *= -1
+    location.y = region.topLeft.y + atom.radius
+  }
+
   return {
     ...atom,
-    location: atom.location.add(velocity)
+    location: location,
+    velocity: velocity
   }
 }
 
-function randomLocation() {
-  return random(MINIMUM_LOCATION, MINIMUM_LOCATION, MAXIMUM_LOCATION, MAXIMUM_LOCATION)
+function randomLocation(region) {
+  return randomV(
+    region.topLeft.x + 0.1,
+    region.topLeft.y + 0.1,
+    region.bottomRight.x - 0.1,
+    region.bottomRight.y - 0.1
+  )
 }
 
 function randomVelocity() {
-  return random(MINIMUM_SPEED, MINIMUM_SPEED, MAXIMUM_SPEED, MAXIMUM_SPEED)
+  return randomV(MINIMUM_SPEED, MINIMUM_SPEED, MAXIMUM_SPEED, MAXIMUM_SPEED)
 }
 
 function randomTemperature() {

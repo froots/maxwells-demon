@@ -13,6 +13,10 @@ class Vector {
   scale(s) {
     return new Vector(this.x * s, this.y * s)
   }
+
+  clone() {
+    return new Vector(this.x, this.y)
+  }
 }
 
 export function random(minX, minY, maxX, maxY) {
