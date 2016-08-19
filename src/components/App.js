@@ -79,12 +79,19 @@ class App extends Component {
 
   update(timestamp) {
     const timediff = timestamp - this.state.previousUpdate
-    const region = this.region
-    const atoms = this.state.atoms.map((atom) => updateAtom(atom, timediff, region))
+    const atoms = this.state.atoms.map((atom) => {
+      let region = this.region
+      if (this.state.barrier) {
+        region = (this.hotRegion.contains(atom.location)) ? this.hotRegion : this.coldRegion
+      }
+      return updateAtom(atom, timediff, region)
+    })
+
     this.setState({
       previousUpdate: timestamp,
       atoms
     })
+
     this.animationFrame = window.requestAnimationFrame(this.update)
   }
 
