@@ -1,28 +1,26 @@
 const colors = {
   hot: {
-    background: "#300",
-    atom: "#e66"
+    background: "rgba(255,20,30,.15)",
+    backgroundOn: "rgba(255,20,30,.25)",
+    atom: "rgba(255,20,30,.7)"
   },
   cold: {
-    background: "#003",
-    atom: "#66e"
+    background: "rgba(20,30,255,.15)",
+    backgroundOn: "rgba(20,30,255,.25)",
+    atom: "rgba(20,30,255,.7)"
   }
-};
+}
 
 export function getBackgroundColorFromTemperature(temperature) {
-  switch(temperature) {
-    case 'hot':
-      return colors.hot.background;
-    default:
-      return colors.cold.background;
-  }
+  return (temperature === 'hot') ? colors.hot.background : colors.cold.background
+}
+
+export function getBackgroundOnColorFromTemperature(temperature) {
+  return (temperature === 'hot') ? colors.hot.backgroundOn : colors.cold.backgroundOn
 }
 
 export function getAtomColorFromTemperature(temperature) {
-  switch(temperature) {
-    case 'hot':
-      return colors.hot.atom;
-    default:
-      return colors.cold.atom;
-  }
+  return (temperature === 'hot') ? colors.hot.atom : colors.cold.atom
 }
+
+export default colors

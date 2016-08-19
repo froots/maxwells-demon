@@ -14,26 +14,31 @@ class App extends Component {
 
   render() {
     const { barrier, atoms } = this.state
+    const { hot, cold } = this.getScores(atoms)
     return (
       <div className="App">
         <Game
           width={GAME_SIZE}
           height={GAME_SIZE}
           barrier={barrier}
-          atoms={atoms} />
+          atoms={atoms}
+          hotScore={hot}
+          coldScore={cold} />
       </div>
     )
   }
 
   componentWillMount() {
-    this.region = new Region(0, 0, 1, 1)
+    this.region = new Region(0, 0, 100, 100)
+    this.hotRegion = new Region(0, 0, 50, 100)
+    this.coldRegion = new Region(50, 0, 100, 100)
     this.handleKeyDown = this.handleKeyDown.bind(this)
     this.handleKeyUp = this.handleKeyUp.bind(this)
     this.addAtom = this.addAtom.bind(this)
     this.update = this.update.bind(this)
 
     document.addEventListener('keydown', this.handleKeyDown, false)
-    document.addEventListener('keyp', this.handleKeyUp, false)
+    document.addEventListener('keyup', this.handleKeyUp, false)
 
     this.addAtom()
     this.addAtomInterval = window.setInterval(this.addAtom, ADD_ATOM_INTERVAL)
@@ -81,6 +86,22 @@ class App extends Component {
       atoms
     })
     this.animationFrame = window.requestAnimationFrame(this.update)
+  }
+
+  getScores(atoms) {
+    const hot = atoms
+      .filter((atom) => atom.temperature === 'cold')
+      .filter((atom) => this.hotRegion.contains(atom.location))
+      .length
+    const cold = atoms
+      .filter((atom) => atom.temperature === 'hot')
+      .filter((atom) => this.coldRegion.contains(atom.location))
+      .length
+
+    return {
+      hot,
+      cold
+    }
   }
 }
 

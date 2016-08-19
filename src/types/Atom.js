@@ -2,7 +2,8 @@ import { random as randomV } from '../lib/Vector'
 import {
   MINIMUM_SPEED,
   MAXIMUM_SPEED,
-  ATOM_RADIUS
+  ATOM_RADIUS,
+  BUFFER
 } from '../config.json'
 
 const HOT = 'hot'
@@ -54,10 +55,10 @@ export function update(atom, timediff, region) {
 
 function randomLocation(region) {
   return randomV(
-    region.topLeft.x + 0.1,
-    region.topLeft.y + 0.1,
-    region.bottomRight.x - 0.1,
-    region.bottomRight.y - 0.1
+    region.topLeft.x + BUFFER,
+    region.topLeft.y + BUFFER,
+    region.bottomRight.x - BUFFER,
+    region.bottomRight.y - BUFFER
   )
 }
 

@@ -5,6 +5,11 @@ class Region {
     this.topLeft = new Vector(x1, y1)
     this.bottomRight = new Vector(x2, y2)
   }
+
+  contains(v) {
+    return v.isLessThan(this.bottomRight) &&
+      v.isGreaterThan(this.topLeft)
+  }
 }
 
 export default Region

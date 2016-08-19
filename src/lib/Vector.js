@@ -17,6 +17,14 @@ class Vector {
   clone() {
     return new Vector(this.x, this.y)
   }
+
+  isLessThan(v) {
+    return this.x < v.x && this.y < v.y
+  }
+
+  isGreaterThan(v) {
+    return this.x > v.x && this.y > v.y
+  }
 }
 
 export function random(minX, minY, maxX, maxY) {
