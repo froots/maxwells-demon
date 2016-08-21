@@ -9,12 +9,14 @@ class App extends Component {
   state = {
     barrier: false,
     atoms: [],
-    previousUpdate: 0
+    previousUpdate: 0,
+    hotScore: 0,
+    coldScore: 0,
+    totalScore: 0
   }
 
   render() {
-    const { barrier, atoms } = this.state
-    const { hot, cold } = this.getScores(atoms)
+    const { barrier, atoms, hotScore, coldScore, totalScore } = this.state
     return (
       <div className="App">
         <Game
@@ -22,8 +24,9 @@ class App extends Component {
           height={GAME_SIZE}
           barrier={barrier}
           atoms={atoms}
-          hotScore={hot}
-          coldScore={cold} />
+          hotScore={hotScore}
+          coldScore={coldScore}
+          totalScore={totalScore} />
       </div>
     )
   }
@@ -36,12 +39,14 @@ class App extends Component {
     this.handleKeyUp = this.handleKeyUp.bind(this)
     this.addAtom = this.addAtom.bind(this)
     this.update = this.update.bind(this)
+    this.updateScore = this.updateScore.bind(this)
 
     document.addEventListener('keydown', this.handleKeyDown, false)
     document.addEventListener('keyup', this.handleKeyUp, false)
 
     this.addAtom()
     this.addAtomInterval = window.setInterval(this.addAtom, ADD_ATOM_INTERVAL)
+    this.updateScoreInterval = window.setInterval(this.updateScore, 1000)
     this.animationFrame = window.requestAnimationFrame(this.update)
   }
 
@@ -49,6 +54,7 @@ class App extends Component {
     document.removeEventListener('keydown', this.handleKeyDown, false)
     document.removeEventListener('keyup', this.handleKeyUp, false)
     window.clearInterval(this.addAtomInterval)
+    window.clearInterval(this.updateScoreInterval)
     if (window.cancelAnimationFrame) {
       window.cancelAnimationFrame(this.animationFrame)
     }
@@ -87,27 +93,36 @@ class App extends Component {
       return updateAtom(atom, timediff, region)
     })
 
+    const { hotScore, coldScore } = this.getScores(atoms)
+
     this.setState({
       previousUpdate: timestamp,
-      atoms
+      atoms,
+      hotScore,
+      coldScore
     })
 
     this.animationFrame = window.requestAnimationFrame(this.update)
   }
 
+  updateScore() {
+    const totalScore = this.state.totalScore + this.state.hotScore + this.state.coldScore
+    this.setState({ totalScore })
+  }
+
   getScores(atoms) {
-    const hot = atoms
+    const hotScore = atoms
       .filter((atom) => atom.temperature === 'cold')
       .filter((atom) => this.hotRegion.contains(atom.location))
       .length
-    const cold = atoms
+    const coldScore = atoms
       .filter((atom) => atom.temperature === 'hot')
       .filter((atom) => this.coldRegion.contains(atom.location))
       .length
 
     return {
-      hot,
-      cold
+      hotScore,
+      coldScore
     }
   }
 }
