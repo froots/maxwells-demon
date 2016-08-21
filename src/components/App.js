@@ -16,7 +16,7 @@ class App extends Component {
   }
 
   render() {
-    const { barrier, atoms, hotScore, coldScore, totalScore } = this.state
+    const { barrier, atoms, hotScore, coldScore, totalScore, previousUpdate } = this.state
     return (
       <div className="App">
         <Game
@@ -26,7 +26,8 @@ class App extends Component {
           atoms={atoms}
           hotScore={hotScore}
           coldScore={coldScore}
-          totalScore={totalScore} />
+          totalScore={totalScore}
+          time={previousUpdate} />
       </div>
     )
   }

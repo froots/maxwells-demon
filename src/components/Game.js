@@ -2,9 +2,10 @@ import React, { PropTypes } from 'react'
 import Atom from './Atom'
 import Container from './Container'
 import TotalScore from './TotalScore'
+import Timer from './Timer'
 import './Game.css'
 
-const Game = ({ width, height, barrier, atoms, hotScore, coldScore, totalScore }) => {
+const Game = ({ width, height, barrier, atoms, hotScore, coldScore, totalScore, time }) => {
   const bar = (barrier) ? <rect x={50-0.4} y={0} width={0.8} height={100} fill="#fff" /> : null
 
   return (
@@ -15,7 +16,8 @@ const Game = ({ width, height, barrier, atoms, hotScore, coldScore, totalScore }
         { atoms.map((atom) => <Atom key={atom.id} {...atom} />) }
       </g>
       {bar}
-      <TotalScore x={0} y={80} width={100} height={20} score={totalScore} />
+      <TotalScore x={10} y={80} width={50} height={20} score={totalScore} />
+      <Timer x={90} y={80} width={50} height={20} time={time} />
     </svg>
   )
 }
@@ -27,7 +29,8 @@ Game.propTypes = {
   atoms: PropTypes.array.isRequired,
   hotScore: PropTypes.number,
   coldScore: PropTypes.number,
-  totalScore: PropTypes.number
+  totalScore: PropTypes.number,
+  time: PropTypes.number
 }
 
 export default Game

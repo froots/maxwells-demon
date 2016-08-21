@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react'
 
 const TotalScore = ({x, y, width, height, score}) => {
-  const textX = x + width / 2
+  const textX = x
   const textY = y + height / 2
   return (
-    <text x={textX} y={textY} dominantBaseline="middle" textAnchor="middle" fill="#fff">
+    <text x={textX} y={textY} dominantBaseline="middle" textAnchor="start" fontSize="5" fill="#fff">
       {score}
     </text>
   )
